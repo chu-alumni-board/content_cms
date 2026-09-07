@@ -1,0 +1,52 @@
+# Sveltia CMS config.
+# This file is published alongside the admin UI — never put secrets here.
+
+backend:
+  name: github
+  repo: chu-alumni-board/content_cms
+  branch: develop
+  # Conventional Commits style, matching this workspace's commit convention.
+  # {{collection}} is deliberately not used — it resolves to the collection's
+  # display label, which is configured in Chinese and would mix into the
+  # commit type/subject.
+  commit_messages:
+    create: 'content: publish "{{slug}}"'
+    update: 'content: update "{{slug}}"'
+    delete: 'content: remove "{{slug}}"'
+
+# Required by Sveltia CMS (omitting it fails startup: "The media folder is not defined").
+# This only satisfies the startup requirement — the announcements schema has no image/attachment field.
+media_folder: /content/uploads
+
+slug:
+  # Lets a Chinese title become the filename directly, so editors don't need to type an English slug.
+  encoding: unicode
+
+collections:
+  - name: announcements
+    label: 公告
+    label_singular: 公告
+    folder: /content/announcements
+    create: true
+    # The filename prefix only exists to avoid same-title collisions — it carries no display-date or
+    # sort meaning. Sorting is entirely driven by publishedAt (see below). The prefix is derived from
+    # publishedAt itself (already UTC), to the second; never read it as a "publish date" — the UI
+    # always shows the converted publishedAt value instead.
+    slug: "{{publishedAt | date('YYYYMMDDTHHmmss', 'utc')}}-{{slug}}"
+    sortable_fields: [publishedAt, title]
+    fields:
+      - { name: title, label: 標題, widget: string, required: true }
+      # Same-day announcements are possible, and a date-only field can't order them, hence a full
+      # timestamp. Editors enter Taiwan local time; storage always converts to UTC (ISO 8601, Z suffix)
+      # — a fixed timezone removes ambiguity. No explicit `format` is set: Sveltia becomes stricter about
+      # a field once it has a `format`, and existing values that don't match get treated as empty,
+      # wiping them out on the next save.
+      - {
+          name: publishedAt,
+          label: 發布時間,
+          widget: datetime,
+          input_timezone: Asia/Taipei,
+          output_utc: true,
+          required: true,
+        }
+      - { name: body, label: 內容, widget: markdown, required: true }
