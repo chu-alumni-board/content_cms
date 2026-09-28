@@ -4,7 +4,7 @@
 backend:
   name: github
   repo: chu-alumni-board/content_cms
-  branch: develop
+  branch: main
   # Only PAT login is verified working.
   auth_methods: [token]
   commit_messages:
