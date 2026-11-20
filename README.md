@@ -141,7 +141,7 @@ The new-image upload/URL-encoding check remains the 2026-11-03 evidence above; i
 
 ## Manual acceptance check (local, reviewer-run)
 
-The 2026-11-03 check above ran against an automation-friendly `test-repo`/OPFS backend. The same multilingual behavior can be checked by hand using the CMS's built-in local-folder mode, which checks for Git metadata (`.git` directory or linked-worktree file) — a plain file copy without it won't do. The commit under test (`1338c72`) hasn't been pushed yet, so a fresh clone from GitHub won't include it. Use a disposable **Git clone of the local Issue branch**, running the following commands from its checkout:
+The 2026-11-03 check above ran against an automation-friendly `test-repo`/OPFS backend. The same multilingual behavior can be checked by hand using the CMS's built-in local-folder mode, which checks for Git metadata (`.git` directory or linked-worktree file) — a plain file copy without it won't do. When testing local changes that have not been published, a fresh clone from GitHub may not include them. Use a disposable **Git clone of the selected local Issue branch**, running the following commands from its checkout:
 
 1. From this repo's root, make a disposable clone of the local Issue branch: `git clone --no-hardlinks --branch feat/3-announcement-locales . ../content_cms-i18n-check` (use a new destination if it already exists).
 2. Change into that disposable clone: `cd ../content_cms-i18n-check`.
