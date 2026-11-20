@@ -18,16 +18,29 @@ media_folder: /content/uploads
 slug:
   encoding: unicode
 
+# `single_file_default_root`: the default locale's fields stay at the file root (unnested),
+# and only non-default locales get nested under a locale key. This is why existing
+# announcement files, which only ever had root-level fields, need no migration — they're
+# already valid zh-TW-only entries under this structure.
+i18n:
+  structure: single_file_default_root
+  locales: [zh-TW, en-US, vi-VN]
+  default_locale: zh-TW
+  # Chinese is the only locale a new entry starts with; English/Vietnamese are opt-in
+  # per entry from the CMS UI. The default locale can never be disabled.
+  initial_locales: [zh-TW]
+
 collections:
   - name: announcements
     label: 公告
     label_singular: 公告
     folder: /content/announcements
     create: true
+    i18n: true
     slug: "{{publishedAt | date('YYYYMMDDTHHmmss', 'utc')}}-{{slug}}"
     sortable_fields: [publishedAt, title]
     fields:
-      - { name: title, label: 標題, widget: string, required: true }
+      - { name: title, label: 標題, widget: string, required: true, i18n: true }
       # Do not add `format:` here — Sveltia treats non-matching existing values as empty and wipes them on save.
       - {
           name: publishedAt,
@@ -37,4 +50,4 @@ collections:
           output_utc: true,
           required: true,
         }
-      - { name: body, label: 內容, widget: markdown, required: true }
+      - { name: body, label: 內容, widget: markdown, required: true, i18n: true }
